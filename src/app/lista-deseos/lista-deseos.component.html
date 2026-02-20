@@ -1,0 +1,21 @@
+<div class="wishlist-container">
+  <h1>Mi Lista de deseos ❤️</h1>
+
+  @if (wishlist().length === 0) {
+    <p>Tu lista de deseos está vacía. ¡Agrega productos desde el catálogo!</p>
+  } @else {
+    <div class="grid">
+      @for (producto of wishlist(); track producto.id_producto) {
+        <div class="card">
+          <img [src]="producto.imagen ?? 'https://via.placeholder.com/300x300?text=Sin+Imagen'" [alt]="producto.name">
+          <div class="info">
+            <h3>{{ producto.name }}</h3>
+            <p class="price">${{ producto.precio?.toLocaleString('es-CL') ?? 'Sin precio' }}</p>
+            <button class="btn-primary" (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
+            <button class="btn-wishlist activo" (click)="toggleListaDeseos(producto)">❤️ Quitar</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

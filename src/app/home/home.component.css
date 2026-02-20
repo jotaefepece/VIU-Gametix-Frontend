@@ -1,0 +1,87 @@
+.home-container {
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 100px); /* espacio para header */
+}
+
+h1 {
+  color: #9d7bff;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  color: #ccc;
+  font-size: 1.4rem;
+  margin-bottom: 4rem;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  position: relative;
+  z-index: 1; /* asegura que los cards estén encima */
+}
+
+.link-card {
+  background: #111111;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-decoration: none;
+  color: #eeeeee;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  border: 1px solid rgba(157,123,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.link-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 50px rgba(157,123,255,0.35);
+  border-color: #9d7bff;
+}
+
+.link-card h2 {
+  color: #9d7bff;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.link-card p {
+  margin: 0;
+  color: #bbbbbb;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* Botón especial de Iniciar sesión */
+.login {
+  background: linear-gradient(135deg, #9d7bff 0%, #b8a0ff 100%);
+  color: #000000;
+  font-weight: bold;
+}
+
+.login:hover {
+  background: linear-gradient(135deg, #b8a0ff 0%, #d0c0ff 100%);
+  transform: translateY(-12px);
+  box-shadow: 0 20px 50px rgba(157,123,255,0.5);
+}
+
+/* Ajuste para mobile/small screens */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 4rem 1rem 2rem;
+  }
+
+  h1 {
+    font-size: 2.8rem;
+  }
+
+  .links-grid {
+    grid-template-columns: 1fr;
+  }
+}

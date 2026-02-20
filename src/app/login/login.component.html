@@ -1,0 +1,22 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">🎮 GAMETIX</div>
+    <h2>Iniciar sesión</h2>
+
+    <form>
+      <input type="email" placeholder="Correo electrónico" required />
+      <input type="password" placeholder="Contraseña" required />
+      <button type="submit" class="btn-primary">Iniciar sesión</button>
+    </form>
+
+    <p>¿No tienes cuenta? <a href="#">Regístrate</a></p>
+
+    <div class="simulado-section">
+      <hr style="border-color: #333; margin: 2rem 0;">
+      <p style="color: #aaa; font-size: 0.9rem;">(Para pruebas rápidas)</p>
+      <button (click)="login()" class="btn-primary simulado-btn">
+        Login simulado (sin credenciales)
+      </button>
+    </div>
+  </div>
+</div>

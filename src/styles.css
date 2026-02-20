@@ -1,0 +1,90 @@
+/* Estilos globales de Gametix */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #eeeeee;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+}
+
+a {
+  color: #9d7bff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #b8a0ff;
+}
+
+.logo {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #9d7bff;
+}
+
+header {
+  background-color: #111111;
+  padding: 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+nav a {
+  color: #eeeeee;
+  margin: 0 20px;
+  font-size: 1.1rem;
+}
+
+nav a:hover {
+  color: #9d7bff;
+}
+
+.btn-primary {
+  background-color: #9d7bff;
+  color: #000000;
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #b8a0ff;
+}
+
+.card {
+  background-color: #111111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(157, 123, 255, 0.15);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
+  padding: 30px;
+}
+
+.price {
+  color: #9d7bff;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

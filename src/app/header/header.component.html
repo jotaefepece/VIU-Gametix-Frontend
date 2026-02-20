@@ -1,0 +1,23 @@
+<header>
+  <div class="logo">🎮 GAMETIX</div>
+
+  <nav class="menu">
+    <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+    <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
+    <a routerLink="/lista-deseos" routerLinkActive="active">Lista de deseos</a>
+    <a routerLink="/carrito" routerLinkActive="active">Carrito</a>
+
+ <!-- Mostrar Login si NO está logueado -->
+  <a *ngIf="!isLoggedIn()" routerLink="/login">Login</a>
+
+  <!-- Mostrar Logout si está logueado -->
+  <button *ngIf="isLoggedIn()" (click)="logout()">Cerrar sesión</button>
+
+    @if (isLoggedIn()) {
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active" class="btn-login">Iniciar sesión</a>
+    }
+  </nav>
+</header>
+

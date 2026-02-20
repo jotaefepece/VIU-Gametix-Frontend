@@ -1,0 +1,52 @@
+<div class="categorias-container">
+  <h1>Categorías</h1>
+
+  @if (loading) {
+    <p>Cargando categorías...</p>
+  } @else if (error) {
+    <p style="color: red;">{{ error }}</p>
+  } @else {
+
+    <div class="categorias-list">
+      @for (cat of categorias; track cat.id) {
+        <div class="categoria-card"
+             (click)="seleccionarCategoria(cat)"
+             [class.activa]="categoriaSeleccionada?.id === cat.id">
+
+          <h3>{{ cat.descripcion }}</h3>
+          <button class="btn-ver">Ver productos</button>
+        </div>
+      }
+    </div>
+
+    @if (categoriaSeleccionada) {
+      <div class="filtro">
+        <input type="text" placeholder="Buscar..." (input)="filtrarPorTexto($event)" />
+      </div>
+
+      <h2>Productos en: {{ categoriaSeleccionada.descripcion }}</h2>
+
+      <div class="grid">
+        @for (producto of productosFiltrados; track $index) {
+          <div class="card">
+            <h3>{{ producto.name }}</h3>
+
+            <button (click)="agregarAlCarrito(producto)">
+              Agregar carrito
+            </button>
+
+            <button (click)="toggleListaDeseos(producto)">
+              @if (estaEnListaDeseos(producto.id_producto)) {
+                Quitar deseos
+              } @else {
+                Agregar deseos
+              }
+            </button>
+
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
