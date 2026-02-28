@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from './config/api.config';
 import { Product } from './producto.service';
+import { PedidoService } from '../services/pedido.service';
+import { DetallePedidoService } from '../services/detalle-pedido.service';
+import { MovimientoStockService } from '../services/movimiento-stock.service';
+import { PagoService } from '../services/pago.service';
 
 export interface Carrito {
   id_carrito: number;

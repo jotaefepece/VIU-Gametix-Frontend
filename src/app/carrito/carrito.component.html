@@ -5,74 +5,71 @@
   </div>
 
   @if (loading) {
-    <p class="empty">Cargando carrito...</p>
+  <p class="empty">Cargando carrito...</p>
   }
 
   @if (!loading && errorMsg) {
-    <p class="empty error">{{ errorMsg }}</p>
+  <p class="empty error">{{ errorMsg }}</p>
   }
 
   @if (!loading && items.length === 0) {
-    <p class="empty">
-      Tu carrito está vacío. Agrega productos desde el catálogo.
-    </p>
+  <p class="empty">Tu carrito está vacío. Agrega productos desde el catálogo.</p>
   }
 
   @if (!loading && items.length > 0) {
-    <table class="wishlist-table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
-          <th>Subtotal</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+  <table class="wishlist-table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
 
-      <tbody>
-        @for (item of items; track item.id_producto) {
-          <tr>
-            <td>
-              {{ item.producto?.name }}
-            </td>
+    <tbody>
+      @for (item of items; track item.id_producto) {
+      <tr>
+        <td>{{ item.producto?.name }}</td>
 
-            <td>
-              ${{ item.producto?.price?.toLocaleString('es-CL') }}
-            </td>
+        <td>${{ item.producto?.price?.toLocaleString('es-CL') }}</td>
 
-            <td>
-              <div class="qty">
-                <button class="btn-qty" type="button" (click)="dec(item)">−</button>
+        <td>
+          <div class="qty">
+            <button class="btn-qty" type="button" (click)="dec(item)">−</button>
 
-                <input
-                  class="qty-input"
-                  type="number"
-                  [value]="item.cantidad"
-                  (change)="onCantidadInput(item, $any($event.target).value)"
-                  min="1"
-                  [max]="item.producto?.stock ?? 999"
-                />
+            <input class="qty-input" type="number" [value]="item.cantidad"
+              (change)="onCantidadInput(item, $any($event.target).value)" min="1" [max]="item.producto?.stock ?? 999" />
 
-                <button class="btn-qty" type="button" (click)="inc(item)">+</button>
-              </div>
-            </td>
+            <button class="btn-qty" type="button" (click)="inc(item)">+</button>
+          </div>
+        </td>
 
-            <td>
-              ${{ ((item.producto?.price ?? 0) * item.cantidad).toLocaleString('es-CL') }}
-            </td>
+        <td>
+          ${{ ((item.producto?.price ?? 0) * item.cantidad).toLocaleString('es-CL') }}
+        </td>
 
-            <td class="acciones">
-              <button class="btn-eliminar" (click)="remove(item)">🗑</button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+        <td class="acciones">
+          <button class="btn-eliminar" (click)="remove(item)">🗑</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
 
-    <div class="total-box">
-      <span>Total:</span>
-      <strong>${{ total.toLocaleString('es-CL') }}</strong>
-    </div>
+  <div class="total-box">
+    <span>Total:</span>
+    <strong>${{ total.toLocaleString('es-CL') }}</strong>
+  </div>
+
+  <div class="checkout-actions" *ngIf="items.length > 0">
+    <button class="btn primary" (click)="checkout()" [disabled]="checkoutLoading || loading">
+      {{ checkoutLoading ? 'Procesando...' : 'Finalizar compra' }}
+    </button>
+  </div>
+
+  <p class="empty" *ngIf="checkoutMsg">{{ checkoutMsg }}</p>
+
   }
 </div>
