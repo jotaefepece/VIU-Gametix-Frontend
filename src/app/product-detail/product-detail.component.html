@@ -17,10 +17,7 @@
   <div *ngIf="!loading && product" class="card">
 
     <div class="img-box">
-      <img
-        [src]="product.imagen_url || 'https://via.placeholder.com/600x400?text=Sin+imagen'"
-        [alt]="product.name"
-      />
+      <img [src]="product.imagen_url || 'https://via.placeholder.com/600x400?text=Sin+imagen'" [alt]="product.name" />
     </div>
 
     <div class="info">
@@ -52,14 +49,29 @@
       </div>
 
       <div class="actions">
-        <button class="btn" (click)="openWebsite(product?.website)" [disabled]="!product?.website">
-          Ver sitio web
-        </button>
+        <button class="btn" (click)="openWebsite(product.website)" [disabled]="!product.website">
+  Ver sitio web
+</button>
 
-        <button class="btn primary">
-          Agregar al carrito
+        <!-- ✅ Selector de cantidad -->
+        <div class="qty">
+          <button class="btn-qty" type="button" (click)="decQty()" [disabled]="qty <= 1 || addingToCart">−</button>
+
+          <input type="number" class="qty-input" [value]="qty" (input)="onQtyChange($any($event.target).value)"
+            [min]="1" [max]="product.stock" [disabled]="addingToCart" />
+
+          <button class="btn-qty" type="button" (click)="incQty()"
+            [disabled]="addingToCart || (product.stock > 0 && qty >= product.stock)">
+            +
+          </button>
+        </div>
+
+        <button class="btn primary" (click)="addToCart()" [disabled]="addingToCart || product.stock <= 0">
+          {{ addingToCart ? 'Agregando...' : 'Agregar al carrito' }}
         </button>
       </div>
+
+      <p class="added-msg" *ngIf="addedMsg">{{ addedMsg }}</p>
     </div>
 
   </div>

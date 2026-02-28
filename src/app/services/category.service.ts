@@ -48,6 +48,7 @@ export class CategoryService {
   }
 
   updateCategory(id: number, payload: { descripcion?: string; activo?: boolean }): Observable<any> {
+
     return this.http.put(`${this.apiUrl}/categories/${id}`, payload);
   }
 
