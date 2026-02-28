@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { CommonModule } from '@angular/common'; 
 import { Product, ProductService } from '../services/producto.service';
 
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css'],
+  imports: [CommonModule, RouterModule],
 })
 export class ProductDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

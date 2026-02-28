@@ -106,4 +106,12 @@ h2 {
   margin: 0.5rem 0;
 }
 
-.card { cursor: pointer !important; }
+.card, .card * {
+  cursor: pointer;
+}
+
+.link-card{
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
