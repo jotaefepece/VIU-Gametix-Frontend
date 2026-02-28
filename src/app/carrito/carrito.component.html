@@ -1,55 +1,78 @@
 <div class="wishlist-container">
+  <div class="header">
+    <h1>Mi Carrito 🛒</h1>
+    <button class="btn primary" (click)="seguirComprando()">Seguir comprando</button>
+  </div>
 
-  <h1>Mi Carrito ❤️</h1>
+  @if (loading) {
+    <p class="empty">Cargando carrito...</p>
+  }
 
-  @if (productos.length === 0) {
+  @if (!loading && errorMsg) {
+    <p class="empty error">{{ errorMsg }}</p>
+  }
+
+  @if (!loading && items.length === 0) {
     <p class="empty">
-      Tu lista está vacía. Agrega productos desde el catálogo.
+      Tu carrito está vacío. Agrega productos desde el catálogo.
     </p>
   }
 
-  @if (productos.length > 0) {
-
+  @if (!loading && items.length > 0) {
     <table class="wishlist-table">
-
       <thead>
         <tr>
           <th>Producto</th>
           <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
           <th>Acciones</th>
         </tr>
       </thead>
 
       <tbody>
-        @for (producto of productos; track producto.id) {
+        @for (item of items; track item.id_producto) {
           <tr>
             <td>
-              {{ producto.name }}
+              {{ item.producto?.name }}
             </td>
 
             <td>
-              ${{ producto.precio?.toLocaleString('es-CL') }}
+              ${{ item.producto?.price?.toLocaleString('es-CL') }}
+            </td>
+
+            <td>
+              <div class="qty">
+                <button class="btn-qty" type="button" (click)="dec(item)">−</button>
+
+                <input
+                  class="qty-input"
+                  type="number"
+                  [value]="item.cantidad"
+                  (change)="onCantidadInput(item, $any($event.target).value)"
+                  min="1"
+                  [max]="item.producto?.stock ?? 999"
+                />
+
+                <button class="btn-qty" type="button" (click)="inc(item)">+</button>
+              </div>
+            </td>
+
+            <td>
+              ${{ ((item.producto?.price ?? 0) * item.cantidad).toLocaleString('es-CL') }}
             </td>
 
             <td class="acciones">
-
-              <!--button class="btn-carrito"
-                      (click)="enviarProductoAlCarrito(producto)">
-                🛒
-              </button-->
-
-              <!--button class="btn-eliminar"
-                      (click)="eliminarProductoDeLista(producto)">
-                🗑
-              </button-->
-
+              <button class="btn-eliminar" (click)="remove(item)">🗑</button>
             </td>
           </tr>
         }
       </tbody>
-
     </table>
 
+    <div class="total-box">
+      <span>Total:</span>
+      <strong>${{ total.toLocaleString('es-CL') }}</strong>
+    </div>
   }
-
 </div>
