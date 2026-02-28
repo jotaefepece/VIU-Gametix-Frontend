@@ -1,22 +1,61 @@
 <div class="login-container">
   <div class="login-card">
+    
     <div class="logo">🎮 GAMETIX</div>
     <h2>Iniciar sesión</h2>
 
-    <form>
-      <input type="email" placeholder="Correo electrónico" required />
-      <input type="password" placeholder="Contraseña" required />
-      <button type="submit" class="btn-primary">Iniciar sesión</button>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <input 
+          type="email"
+          placeholder="Correo electrónico"
+          formControlName="email"
+        />
+
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+          <small class="error">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              El correo es obligatorio
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              Formato de correo inválido
+            }
+          </small>
+        }
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="form-group">
+        <input 
+          type="password"
+          placeholder="Contraseña"
+          formControlName="password"
+        />
+
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          <small class="error">
+            La contraseña es obligatoria
+          </small>
+        }
+      </div>
+
+      <!-- BOTÓN -->
+      <button 
+        type="submit" 
+        class="btn-primary">
+        Iniciar sesión
+      </button>
+
     </form>
 
-    <p>¿No tienes cuenta? <a href="#">Regístrate</a></p>
+    <p>
+      ¿No tienes cuenta?
+      <a routerLink="/registro">
+        Regístrate
+      </a>
+    </p>
 
-    <div class="simulado-section">
-      <hr style="border-color: #333; margin: 2rem 0;">
-      <p style="color: #aaa; font-size: 0.9rem;">(Para pruebas rápidas)</p>
-      <button (click)="login()" class="btn-primary simulado-btn">
-        Login simulado (sin credenciales)
-      </button>
-    </div>
   </div>
 </div>

@@ -1,0 +1,25 @@
+
+<div class="container">
+  <div class="card">
+    <div class="logo">🎮 GAMETIX</div>
+    <h2>Crear cuenta</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <input type="text" placeholder="Nombre de usuario" formControlName="username" />
+      <input type="email" placeholder="Correo electrónico" formControlName="email" />
+      <input type="password" placeholder="Contraseña" formControlName="password" />
+      <input type="password" placeholder="Repetir contraseña" formControlName="confirmPassword" />
+
+      <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
+        class="error">
+        Las contraseñas no coinciden
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid">
+        Registrarse
+      </button>
+    </form>
+
+    <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </div>
+</div>

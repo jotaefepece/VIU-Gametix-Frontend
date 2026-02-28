@@ -1,21 +1,62 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';  // ← agregamos esto para redirigir después del login
+import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [],  // si usas routerLink o forms aquí, agrega RouterLink o FormsModule
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
 
-  constructor(private router: Router) {}  // inyectamos Router para redirigir
+  loginForm: FormGroup;
 
-  login() {
-    localStorage.setItem('userLoggedIn', 'true');
-    // Redirect a catálogo o home después del "login"
-    this.router.navigate(['/catalogo']);  // o '/' para home, o donde quieras
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
+
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+
+  }
+
+  onSubmit(): void {
+
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+
+        //console.log('Respuesta completa del login:', response);
+
+        // 🔥 Guardar token
+        this.authService.guardarToken(response.token);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+
+        // Redirigir al catálogo
+        this.router.navigate(['/catalogo']);
+      },
+      error: (error) => {
+        console.error('Error login:', error.error);
+      }
+    });
+
   }
 
 }

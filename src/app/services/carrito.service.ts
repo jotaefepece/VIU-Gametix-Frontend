@@ -1,60 +1,41 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Producto } from '../models/producto.model';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { API_URL } from './config/api.config'; 
 
-export interface CarritoItem {
-  producto: Producto;
-  cantidad: number;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
-  private items = signal<CarritoItem[]>([]);
 
-  getItems() {
-    return this.items.asReadonly();
+    private http = inject(HttpClient);
+    private apiUrl = inject(API_URL);
+    private endpoint = `${this.apiUrl}/carritos`;
+
+  crearCarrito(userId: number, estado: string ): Observable<any>{
+    return this.http.post(this.endpoint, { user_id: userId, estado: estado });
   }
 
-  total = computed(() => {
-    return this.items().reduce((sum, item) => sum + (item.producto.precio ?? 0) * item.cantidad, 0);
-  });
-
-  agregarProducto(producto: Producto, cantidad: number = 1) {
-    const current = this.items();
-    const existingIndex = current.findIndex(i => i.producto.id_producto === producto.id_producto);
-
-    if (existingIndex !== -1) {
-      // Existe → suma cantidad
-      current[existingIndex].cantidad += cantidad;
-      this.items.set([...current]);
-    } else {
-      // No existe → agrega nuevo
-      this.items.set([...current, { producto, cantidad }]);
-    }
+   agregarProductoCarrito(idCarrito: number, idProducto: number): Observable<any> {
+    return this.http.post(
+      `${this.endpoint}/${idCarrito}/items`,
+      { id_producto: idProducto }
+    );
   }
 
-  actualizarCantidad(id: number, cantidad: number) {
-    if (cantidad < 1) {
-      this.eliminarProducto(id);
-      return;
-    }
-
-    const current = this.items();
-    const index = current.findIndex(i => i.producto.id_producto === id);
-
-    if (index !== -1) {
-      current[index].cantidad = cantidad;
-      this.items.set([...current]);
-    }
+  obtenerProductosCarrito(idCarrito: number): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.endpoint}/${idCarrito}/items`
+    );
   }
 
-  eliminarProducto(id: number) {
-    const current = this.items();
-    this.items.set(current.filter(i => i.producto.id_producto !== id));
+  eliminarProductoCarrito(idCarrito: number, idProducto: number): Observable<any> {
+    return this.http.delete(
+      `${this.endpoint}/${idCarrito}/items/${idProducto}`
+    );
   }
 
-  clear() {
-    this.items.set([]);
-  }
+
+
 }

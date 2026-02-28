@@ -1,14 +1,31 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject} from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { API_URL } from './config/api.config';
+import { Observable } from 'rxjs';
+
+
+export interface RegistroDTO {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class AuthService {
 
   private loggedIn = signal<boolean>(false);
 
-  constructor(private router: Router) {
+  private http = inject(HttpClient);
+  private apiUrl = inject(API_URL);
+
+ constructor(private router: Router) {
     const stored = localStorage.getItem('userLoggedIn') === 'true';
     this.loggedIn.set(stored);
   }
@@ -16,17 +33,31 @@ export class AuthService {
   // ✅ SIGNAL READONLY PARA COMPONENTES
   isAuthenticated = this.loggedIn.asReadonly();
 
-  login() {
-    localStorage.setItem('userLoggedIn', 'true');
-    this.loggedIn.set(true);
-    this.router.navigate(['/catalogo']);
-  }
+  login(data: any) {
+  return this.http.post<any>(`${this.apiUrl}/auth/login`, data);
+}
 
-  logout() {
-    localStorage.removeItem('userLoggedIn');
-    this.loggedIn.set(false);
-    this.router.navigate(['/login']);
-  }
+guardarToken(token: string) {
+  localStorage.setItem('token', token);
+}
+
+obtenerToken(): string | null {
+  return localStorage.getItem('token');
+}
+
+logout() {
+  localStorage.removeItem('token');
+}
+
+estaAutenticado(): boolean {
+  return !!this.obtenerToken();
+}
+
+register(data: RegistroDTO) {
+  return this.http.post<{ user: { id: number, name: string, email: string }, token: string }>(
+    `${this.apiUrl}/auth/register`, data
+  );
+}
 
   requireLogin(action: () => void) {
     if (!this.loggedIn()) {

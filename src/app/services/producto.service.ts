@@ -1,30 +1,34 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_URL } from './config/api.config';
 import { Observable } from 'rxjs';
-import { Producto } from '../models/producto.model';
-import { map } from 'rxjs';
 
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  website: string;
+  stock: number;
+  category: {
+    id: number;
+    descripcion: string;
+  };
+  company: {
+    id_compania: number;
+    nombre: string;
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductoService {
+export class ProductService {
+
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/products';  // ← tu Laravel
+  private apiUrl = inject(API_URL);
 
-	getAll() {
-	  return this.http.get<Producto[]>(this.apiUrl).pipe(
-		map((productos: any[]) =>
-		  productos.map(p => ({
-			...p,
-			id_producto: p.id_producto ?? p.id   // 🔥 NORMALIZACIÓN
-		  }))
-		)
-	  );
-	}
-
-
-  getById(id: number): Observable<Producto> {
-    return this.http.get<Producto>(`${this.apiUrl}/${id}`);
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/products`);
   }
 }

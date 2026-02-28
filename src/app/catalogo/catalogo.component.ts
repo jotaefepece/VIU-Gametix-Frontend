@@ -1,78 +1,124 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductoService } from '../services/producto.service';
+import { CommonModule } from '@angular/common';
+import { ProductService, Product } from '../services/producto.service';
+import { Router } from '@angular/router';
 import { WishlistService } from '../services/wishlist.service';
-import { CarritoService } from '../services/carrito.service';
-import { Producto } from '../models/producto.model';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+
+
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './catalogo.component.html',
-  styleUrl: './catalogo.component.css'
+  styleUrls: ['./catalogo.component.css']
 })
 export class CatalogoComponent implements OnInit {
 
-  private productoService = inject(ProductoService);
-  private wishlistService = inject(WishlistService);
-  private carritoService = inject(CarritoService);
-	private authService = inject(AuthService);
-
-  productosDestacados: Producto[] = [];
-  mejoresValorados: Producto[] = [];
+  productosDestacados: Product[] = [];
+  mejoresValorados: Product[] = [];
 
   loading = true;
   error: string | null = null;
 
-  ngOnInit() {
-    console.log('CatalogoComponent cargado correctamente');
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private wishlistService: WishlistService
+  ) {}
+
+  ngOnInit(): void {
     this.cargarProductos();
   }
 
-  private cargarProductos() {
-    console.log('Intentando cargar productos...');
-
-    this.productoService.getAll().subscribe({
-      next: (productos) => {
-        console.log('¡Productos recibidos de la API!', productos);
-
-        // 🔥 ASEGURAR ID UNICO Y ESTABLE
-		this.productosDestacados = productos.map(p => ({
-		  ...p,
-		  id_producto: p.id_producto ?? p.name   // ID FIJO
-		}));
-
-
-        this.mejoresValorados = this.productosDestacados.filter(
-          p => p.puntuacion && p.puntuacion >= 4.7
-        );
-
+  cargarProductos(): void {
+    this.productService.getProducts().subscribe({
+      next: (data) => {
+        this.productosDestacados = data;
+        this.mejoresValorados = data;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar productos:', err);
-        this.error = 'No se pudieron cargar los productos. Revisa consola.';
+        this.error = 'Error al cargar productos';
         this.loading = false;
       }
     });
   }
 
-  // 🔴 CONSULTA SI ESTA EN WISHLIST
-  estaEnListaDeseos(id: any): boolean {
-    return this.wishlistService.estaEnWishlist(id);
+
+  estaLogueado(): boolean {
+    return !!localStorage.getItem('token');
   }
 
-agregarAlCarrito(producto: Producto) {
-  this.authService.requireLogin(() => {
-    this.carritoService.agregarProducto(producto);
-  });
+agregarALista(producto: Product) {
+ 
+
+  //console.log(producto);
+  //console.log(JSON.parse(usuarioString));
+
+  if (!this.estaLogueado()) {
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  const usuarioString = localStorage.getItem('user');
+  if (!usuarioString) return;
+
+  const usuario = JSON.parse(usuarioString);
+  const idUsuario = usuario.id;
+
+  const idListaStorage = localStorage.getItem('id_lista');
+let idLista = idListaStorage ? parseInt(idListaStorage, 10) : null;
+
+
+  if (!idLista) {
+
+    const dataLista = {
+      id_usuario: idUsuario,
+      nombre: 'Deseos 2026',
+      descripcion: 'Jueguitos y accesorios que quiero comprar'
+    };
+
+    this.wishlistService.crearLista(dataLista).subscribe({
+      next: (lista) => {
+
+         //console.log('Respuesta crearLista:', lista);
+        localStorage.setItem('id_lista', lista.id_lista.toString());
+        idLista = lista.id_lista;
+
+        
+       if (idLista !== null) {
+        this.agregarProductoALista(idLista, producto);
+      }
+
+      },
+      error: (err) => {
+        console.error('Error creando lista', err);
+      }
+    });
+
+  } else {
+
+    this.agregarProductoALista( idLista, producto);
+
+  }
 }
 
-toggleListaDeseos(producto: Producto) {
-  this.authService.requireLogin(() => {
-    this.wishlistService.toggleProducto(producto);
-  });
+private agregarProductoALista(idLista: number, producto: Product) {
+
+  this.wishlistService.agregarProducto(idLista, producto.id)
+    .subscribe({
+      next: (response) => {
+        console.log('Producto agregado correctamente', response);
+      },
+      error: (err) => {
+        console.error('Error agregando producto', err);
+      }
+    });
+
+
 }
+
+
 }
+

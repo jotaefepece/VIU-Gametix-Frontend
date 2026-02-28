@@ -1,29 +1,55 @@
-<div class="carrito-container">
-  <h1>Tu Carrito</h1>
+<div class="wishlist-container">
 
-  @if (items().length === 0) {
-    <p>Tu carrito está vacío. ¡Agrega productos desde el catálogo!</p>
-  } @else {
-    <div class="items-list">
-      @for (item of items(); track item.producto.id_producto) {
-        <div class="carrito-item">
-          <img [src]="item.producto.imagen ?? 'https://via.placeholder.com/300x300?text=Sin+Imagen'" [alt]="item.producto.name" />
-          <div class="info">
-            <h3>{{ item.producto.name }}</h3>
-            <p class="price">${{ item.producto.precio?.toLocaleString('es-CL') ?? 'Sin precio' }}</p>
-          </div>
-          <div class="cantidad">
-            <button (click)="actualizarCantidad(item.producto.id_producto, item.cantidad - 1)">-</button>
-            <span>{{ item.cantidad }}</span>
-            <button (click)="actualizarCantidad(item.producto.id_producto, item.cantidad + 1)">+</button>
-          </div>
-          <p class="subtotal">Subtotal: ${{ (item.producto.precio ?? 0) * item.cantidad | number:'1.0-0':'es-CL' }}</p>
-          <button class="btn-remove" (click)="eliminarProducto(item.producto.id_producto)">Eliminar</button>
-        </div>
-      }
-    </div>
-    <div class="total">
-      <h2>Total: ${{ total().toLocaleString('es-CL') }}</h2>
-    </div>
+  <h1>Mi Carrito ❤️</h1>
+
+  @if (productos.length === 0) {
+    <p class="empty">
+      Tu lista está vacía. Agrega productos desde el catálogo.
+    </p>
   }
+
+  @if (productos.length > 0) {
+
+    <table class="wishlist-table">
+
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (producto of productos; track producto.id) {
+          <tr>
+            <td>
+              {{ producto.name }}
+            </td>
+
+            <td>
+              ${{ producto.precio?.toLocaleString('es-CL') }}
+            </td>
+
+            <td class="acciones">
+
+              <!--button class="btn-carrito"
+                      (click)="enviarProductoAlCarrito(producto)">
+                🛒
+              </button-->
+
+              <!--button class="btn-eliminar"
+                      (click)="eliminarProductoDeLista(producto)">
+                🗑
+              </button-->
+
+            </td>
+          </tr>
+        }
+      </tbody>
+
+    </table>
+
+  }
+
 </div>

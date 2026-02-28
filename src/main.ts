@@ -10,11 +10,7 @@ import localeEsCl from '@angular/common/locales/es-CL';
 registerLocaleData(localeEsCl);
 
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(routes),
-    provideHttpClient()  // ← proporciona HttpClient globalmente
-  ]
-}).catch(err => console.error(err));
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));
 
 

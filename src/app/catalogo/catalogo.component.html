@@ -6,67 +6,63 @@
   } @else if (error) {
     <p style="color: red;">{{ error }}</p>
   } @else {
-    <!-- Sección: Productos disponibles -->
+
+    <!-- ================= PRODUCTOS DISPONIBLES ================= -->
     <h2>Productos disponibles</h2>
+
     <div class="grid">
-      @for (producto of productosDestacados; track producto.id_producto) {
+      @for (producto of productosDestacados; track producto.id) {
+
         <div class="card">
-          <img [src]="producto.imagen ?? 'https://via.placeholder.com/300x300?text=Sin+Imagen'" [alt]="producto.name">
+
+          <img 
+            src="https://via.placeholder.com/300x300?text=Producto"
+            [alt]="producto.name">
+
           <div class="info">
             <h3>{{ producto.name }}</h3>
-            <p class="price">${{ producto.precio?.toLocaleString('es-CL') ?? 'Sin precio' }}</p>
-            <p>{{ producto.description || 'Sin descripción' }}</p>
-            <button class="btn-primary" (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
-			<button
-			  class="btn-wishlist"
-			  (click)="toggleListaDeseos(producto)">
 
-			  @if (estaEnListaDeseos(producto.id_producto)) {
-				Quitar de deseos ❤️
-			  } @else {
-				Agregar a deseos 🤍
-			  }
+            <p class="price">
+              ${{ producto.price?.toLocaleString('es-CL') }}
+            </p>
 
-			</button>
+            <p>
+              {{ producto.description || 'Sin descripción' }}
+            </p>
+
+            <p>
+              Categoría: {{ producto.category?.descripcion }}
+            </p>
+
+            <p>
+              Empresa: {{ producto.company?.nombre }}
+            </p>
+
+            <p *ngIf="producto.stock === 0" style="color:red;">
+              Sin stock
+            </p>
+
+            <!--button 
+              class="btn-primary"
+             (click)="agregarAlCarrito(producto)">
+              Agregar al carrito
+            </button-->
+
+            <button
+              class="btn-wishlist"
+              (click)="agregarALista(producto)">
+
+              Agregar a deseos 🤍
+
+            </button>
 
           </div>
         </div>
+
       } @empty {
         <p>No hay productos disponibles.</p>
       }
     </div>
 
-    <!-- Sección: Mejor valorados -->
-    <h2>Mejor valorados</h2>
-    <div class="grid">
-      @for (producto of mejoresValorados; track producto.id_producto) {
-        <div class="card">
-          <img [src]="producto.imagen ?? 'https://via.placeholder.com/300x300?text=Sin+Imagen'" [alt]="producto.name">
-          <div class="info">
-            <h3>{{ producto.name }}</h3>
-            <p class="price">${{ producto.precio?.toLocaleString('es-CL') ?? 'Sin precio' }}</p>
-            @if (producto.puntuacion) {
-              <p class="puntuacion">★ {{ producto.puntuacion }}</p>
-            }
-            <button class="btn-primary" (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
-			<button
-			  class="btn-wishlist"
-			  [class.activo]="estaEnListaDeseos(producto.id_producto)"
-			  (click)="toggleListaDeseos(producto)">
-
-			  @if (estaEnListaDeseos(producto.id_producto)) {
-				Quitar de deseos ❤️
-			  } @else {
-				Agregar a deseos 🤍
-			  }
-
-			</button>
-
-          </div>
-        </div>
-      } @empty {
-        <p>No hay productos con alta puntuación.</p>
-      }
-    </div>
   }
 </div>
