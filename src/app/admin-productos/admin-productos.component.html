@@ -1,1 +1,165 @@
-<p>admin-productos works!</p>
+<div class="admin-container">
+  <div class="header">
+    <h1>Administrador de Productos</h1>
+    <button class="btn btn-primary" (click)="abrirNuevo()">➕ Nuevo</button>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="filtros.q"
+      placeholder="Buscar (nombre/desc/website)..."
+      class="input"
+    />
+
+    <select [(ngModel)]="filtros.category_id" class="input">
+      <option [ngValue]="null">Todas las categorías</option>
+      <option *ngFor="let c of categorias" [ngValue]="c.id">
+        {{ c.descripcion }}
+      </option>
+    </select>
+
+    <select [(ngModel)]="filtros.id_compania" class="input">
+      <option [ngValue]="null">Todas las compañías</option>
+      <option *ngFor="let co of companias" [ngValue]="co.id_compania">
+        {{ co.nombre }}
+      </option>
+    </select>
+
+    <input type="number" [(ngModel)]="filtros.min_price" placeholder="Min $" class="input small" />
+    <input type="number" [(ngModel)]="filtros.max_price" placeholder="Max $" class="input small" />
+
+    <select [(ngModel)]="filtros.in_stock" class="input small">
+      <option [ngValue]="null">Stock: todos</option>
+      <option [ngValue]="true">Con stock</option>
+      <option [ngValue]="false">Sin stock</option>
+    </select>
+
+    <button class="btn btn-outline" (click)="aplicarFiltros()">Buscar</button>
+    <button class="btn btn-ghost" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+
+  <!-- ESTADOS -->
+  <div *ngIf="loading" class="state">Cargando productos...</div>
+  <div *ngIf="error" class="state error">{{ error }}</div>
+
+  <!-- TABLA -->
+  <div *ngIf="!loading && !error" class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Img</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Categoría</th>
+          <th>Compañía</th>
+          <th class="actions">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of productos">
+          <td>
+            <img class="thumb" [src]="getImageSrc(p)" [alt]="p.name" />
+          </td>
+          <td>
+            <div class="name">{{ p.name }}</div>
+            <div class="sub">{{ p.website || '—' }}</div>
+          </td>
+          <td>${{ (p.price || 0).toLocaleString('es-CL') }}</td>
+          <td [class.red]="p.stock === 0">{{ p.stock }}</td>
+          <td>{{ p.category?.descripcion || '—' }}</td>
+          <td>{{ p.company?.nombre || '—' }}</td>
+          <td class="actions">
+            <button class="icon-btn" title="Editar" (click)="abrirEditar(p)">✏️</button>
+            <button class="icon-btn danger" title="Desactivar" (click)="eliminar(p)">❌</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="productos.length === 0">
+          <td colspan="7" class="empty">No hay productos con esos filtros.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINACIÓN -->
+  <div *ngIf="!loading && !error" class="pagination">
+    <button class="btn btn-ghost" (click)="prevPage()" [disabled]="page <= 1">◀</button>
+    <span>Página {{ page }} / {{ lastPage }} • Total: {{ total }}</span>
+    <button class="btn btn-ghost" (click)="nextPage()" [disabled]="page >= lastPage">▶</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" *ngIf="modalOpen" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ modalMode === 'create' ? 'Nuevo Producto' : 'Editar Producto' }}</h2>
+      <button class="icon-btn" (click)="cerrarModal()">✖</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="grid">
+        <div>
+          <label>Nombre *</label>
+          <input class="input" [(ngModel)]="form.name" />
+        </div>
+
+        <div>
+          <label>Precio</label>
+          <input class="input" type="number" [(ngModel)]="form.price" />
+        </div>
+
+        <div>
+          <label>Stock</label>
+          <input class="input" type="number" [(ngModel)]="form.stock" />
+        </div>
+
+        <div>
+          <label>Website</label>
+          <input class="input" [(ngModel)]="form.website" />
+        </div>
+
+        <div>
+          <label>Categoría *</label>
+          <select class="input" [(ngModel)]="form.category_id">
+            <option [ngValue]="null">Selecciona...</option>
+            <option *ngFor="let c of categorias" [ngValue]="c.id">
+              {{ c.descripcion }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label>Compañía *</label>
+          <select class="input" [(ngModel)]="form.id_compania">
+            <option [ngValue]="null">Selecciona...</option>
+            <option *ngFor="let co of companias" [ngValue]="co.id_compania">
+              {{ co.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label>Descripción</label>
+          <textarea class="input" rows="3" [(ngModel)]="form.description"></textarea>
+        </div>
+
+        <div class="full">
+          <label>image_url (opcional)</label>
+          <input class="input" [(ngModel)]="form.image_url" placeholder="https://..." />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()">
+        {{ modalMode === 'create' ? 'Crear' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </div>
+</div>

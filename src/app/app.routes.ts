@@ -9,6 +9,9 @@ import { CarritoComponent } from './carrito/carrito.component';
 import {RegistroComponent} from './registro/registro.component'
 
 import { authGuard } from './guards/auth.guard';
+import { AdminProductosComponent } from './admin-productos/admin-productos.component';
+import { AdminCategoriasComponent } from './admin-categorias/admin-categorias.component';
+import { PagosComponent } from './pagos/pagos.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/catalogo', pathMatch: 'full' },  // fuerza ir a catálogo
@@ -18,6 +21,9 @@ export const routes: Routes = [
   { path: 'lista-deseos', component: ListaDeseosComponent, canActivate: [authGuard] },
   { path: 'carrito', component: CarritoComponent, canActivate: [authGuard] },
   { path: 'prueba', component: PruebaComponent },
+  { path: 'admin-productos', component: AdminProductosComponent, canActivate: [authGuard] },
+  { path: 'admin-categorias', component: AdminCategoriasComponent, canActivate: [authGuard] },
+  { path: 'pagos', component: PagosComponent, canActivate: [authGuard] },
  // { path: 'categorias', component: CategoriasComponent },
   { path: '**', redirectTo: '/catalogo' }
 ];

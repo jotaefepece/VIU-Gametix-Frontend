@@ -16,7 +16,7 @@
         <div class="card">
 
           <img 
-            src="https://via.placeholder.com/300x300?text=Producto"
+            [src]="producto?.imagen_url?.trim() ? producto.imagen_url : 'https://via.placeholder.com/300x300?text=Producto'"
             [alt]="producto.name">
 
           <div class="info">
