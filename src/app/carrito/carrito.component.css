@@ -21,9 +21,9 @@ h1 {
 
 .empty {
   padding: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   opacity: 0.95;
 }
 
@@ -36,9 +36,9 @@ h1 {
   border-collapse: separate;
   border-spacing: 0;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .wishlist-table thead th {
@@ -47,18 +47,18 @@ h1 {
   font-size: 13px;
   letter-spacing: 0.2px;
   padding: 14px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .wishlist-table tbody td {
   padding: 14px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   vertical-align: middle;
 }
 
 .wishlist-table tbody tr:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .acciones {
@@ -68,10 +68,10 @@ h1 {
   justify-content: flex-start;
 }
 
-/* Botones */
+/* Botones base */
 .btn {
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
   color: #eaeaea;
   padding: 10px 14px;
   border-radius: 12px;
@@ -79,7 +79,7 @@ h1 {
 }
 
 .btn:hover {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .btn:disabled {
@@ -113,8 +113,8 @@ h1 {
 .qty {
   display: inline-flex;
   align-items: center;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   overflow: hidden;
   height: 40px;
@@ -135,7 +135,7 @@ h1 {
 }
 
 .btn-qty:hover {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .qty-input {
@@ -147,8 +147,8 @@ h1 {
   color: #eaeaea;
   text-align: center;
   font-weight: 700;
-  border-left: 1px solid rgba(255,255,255,0.12);
-  border-right: 1px solid rgba(255,255,255,0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Quita flechitas del input number */
@@ -157,16 +157,17 @@ h1 {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .qty-input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Total */
-.total-box {
+/* ✅ Checkout Bar (TOTAL + CTA) */
+.checkout-bar {
   margin-top: 14px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid rgba(155, 124, 255, 0.35);
@@ -174,13 +175,51 @@ h1 {
   border-radius: 16px;
 }
 
-.total-box span {
-  opacity: 0.8;
+.checkout-total {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.total-box strong {
-  font-size: 18px;
+.checkout-total span {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.checkout-total strong {
+  font-size: 20px;
   color: #9b7cff;
+  font-weight: 800;
+}
+
+.btn-checkout {
+  border: 1px solid rgba(155, 124, 255, 0.6);
+  background: rgba(155, 124, 255, 0.22);
+  color: #eaeaea;
+  padding: 10px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  transition: transform 0.12s ease, background 0.2s ease;
+}
+
+.btn-checkout:hover {
+  background: rgba(155, 124, 255, 0.30);
+  transform: translateY(-1px);
+}
+
+.btn-checkout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-checkout .icon {
+  display: grid;
+  place-items: center;
 }
 
 /* Responsive */
@@ -208,17 +247,23 @@ h1 {
   }
 
   .wishlist-table tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
     padding: 10px 0;
   }
 
   .acciones {
     justify-content: flex-start;
   }
-
-  .checkout-actions {
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-end;
 }
+
+@media (max-width: 520px) {
+  .checkout-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-checkout {
+    width: 100%;
+    justify-content: center;
+  }
 }
