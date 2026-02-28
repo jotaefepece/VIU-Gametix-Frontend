@@ -2,67 +2,49 @@
   <h1>Catálogo GAMETIX</h1>
 
   @if (loading) {
-    <p>Cargando productos desde el servidor...</p>
+  <p>Cargando productos desde el servidor...</p>
   } @else if (error) {
-    <p style="color: red;">{{ error }}</p>
+  <p style="color: red;">{{ error }}</p>
   } @else {
 
-    <!-- ================= PRODUCTOS DISPONIBLES ================= -->
-    <h2>Productos disponibles</h2>
+  <!-- ================= PRODUCTOS DISPONIBLES ================= -->
+  <h2>Productos disponibles</h2>
 
-    <div class="grid">
-      @for (producto of productosDestacados; track producto.id) {
+  <div class="grid">
+    @for (producto of productosDestacados; track producto.id) {
 
-        <div class="card">
+    <div class="card" role="link" (click)="irDetalle(producto.id)">
 
-          <img 
-            [src]="producto?.imagen_url?.trim() ? producto.imagen_url : 'https://via.placeholder.com/300x300?text=Producto'"
-            [alt]="producto.name">
+      <img
+        [src]="producto?.imagen_url?.trim() ? producto.imagen_url : 'https://via.placeholder.com/300x300?text=Producto'"
+        [alt]="producto.name">
 
-          <div class="info">
-            <h3>{{ producto.name }}</h3>
+      <div class="info">
+        <h3>{{ producto.name }}</h3>
 
-            <p class="price">
-              ${{ producto.price?.toLocaleString('es-CL') }}
-            </p>
+        <p class="price">
+          ${{ producto.price?.toLocaleString('es-CL') }}
+        </p>
 
-            <p>
-              {{ producto.description || 'Sin descripción' }}
-            </p>
+        <p>{{ producto.description || 'Sin descripción' }}</p>
+        <p>Categoría: {{ producto.category?.descripcion }}</p>
+        <p>Empresa: {{ producto.company?.nombre }}</p>
 
-            <p>
-              Categoría: {{ producto.category?.descripcion }}
-            </p>
+        <p *ngIf="producto.stock === 0" style="color:red;">
+          Sin stock
+        </p>
 
-            <p>
-              Empresa: {{ producto.company?.nombre }}
-            </p>
+        <button type="button" class="btn-wishlist" (click)="agregarALista(producto); $event.stopPropagation();">
+          Agregar a deseos 🤍
+        </button>
 
-            <p *ngIf="producto.stock === 0" style="color:red;">
-              Sin stock
-            </p>
-
-            <!--button 
-              class="btn-primary"
-             (click)="agregarAlCarrito(producto)">
-              Agregar al carrito
-            </button-->
-
-            <button
-              class="btn-wishlist"
-              (click)="agregarALista(producto)">
-
-              Agregar a deseos 🤍
-
-            </button>
-
-          </div>
-        </div>
-
-      } @empty {
-        <p>No hay productos disponibles.</p>
-      }
+      </div>
     </div>
+
+    } @empty {
+    <p>No hay productos disponibles.</p>
+    }
+  </div>
 
   }
 </div>

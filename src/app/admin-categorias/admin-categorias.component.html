@@ -1,1 +1,76 @@
-<p>admin-categorias works!</p>
+<div class="admin-container">
+  <div class="header">
+    <h1>Administrador de Categorías</h1>
+    <button class="btn btn-primary" (click)="abrirNuevo()">➕ Nuevo</button>
+  </div>
+
+  <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="filtros.q"
+      placeholder="Buscar por descripción..."
+      class="input"
+    />
+    <button class="btn btn-outline" (click)="aplicarFiltros()">Buscar</button>
+    <button class="btn btn-ghost" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+
+  <div *ngIf="loading" class="state">Cargando categorías...</div>
+  <div *ngIf="error" class="state error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error" class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descripción</th>
+          <th class="actions">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let c of categorias">
+          <td>{{ c.id }}</td>
+          <td class="bold">{{ c.descripcion }}</td>
+          <td class="actions">
+            <button class="icon-btn" title="Editar" (click)="abrirEditar(c)">✏️</button>
+            <button class="icon-btn danger" title="Desactivar" (click)="eliminar(c)">❌</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="categorias.length === 0">
+          <td colspan="3" class="empty">No hay categorías con esos filtros.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && !error" class="pagination">
+    <button class="btn btn-ghost" (click)="prevPage()" [disabled]="page <= 1">◀</button>
+    <span>Página {{ page }} / {{ lastPage }} • Total: {{ total }}</span>
+    <button class="btn btn-ghost" (click)="nextPage()" [disabled]="page >= lastPage">▶</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" *ngIf="modalOpen" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ modalMode === 'create' ? 'Nueva Categoría' : 'Editar Categoría' }}</h2>
+      <button class="icon-btn" (click)="cerrarModal()">✖</button>
+    </div>
+
+    <div class="modal-body">
+      <label>Descripción *</label>
+      <input class="input" [(ngModel)]="form.descripcion" maxlength="150" />
+      <small class="hint">Máximo 150 caracteres.</small>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()">
+        {{ modalMode === 'create' ? 'Crear' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </div>
+</div>

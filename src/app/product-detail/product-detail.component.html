@@ -1,0 +1,66 @@
+<div class="detail-wrapper">
+
+  <div class="topbar">
+    <button class="btn-back" (click)="goBack()">← Volver</button>
+    <h1 class="title">Detalle de producto</h1>
+  </div>
+
+  <div *ngIf="loading" class="state">
+    <p>Cargando...</p>
+  </div>
+
+  <div *ngIf="!loading && errorMsg" class="state error">
+    <p>{{ errorMsg }}</p>
+    <button class="btn-back" (click)="goBack()">Volver al catálogo</button>
+  </div>
+
+  <div *ngIf="!loading && product" class="card">
+
+    <div class="img-box">
+      <img
+        [src]="product.imagen_url || 'https://via.placeholder.com/600x400?text=Sin+imagen'"
+        [alt]="product.name"
+      />
+    </div>
+
+    <div class="info">
+      <h2 class="name">{{ product.name }}</h2>
+
+      <p class="desc" *ngIf="product.description; else noDesc">
+        {{ product.description }}
+      </p>
+      <ng-template #noDesc>
+        <p class="desc muted">Sin descripción.</p>
+      </ng-template>
+
+      <div class="badges">
+        <span class="badge" *ngIf="product.category?.descripcion">
+          {{ product.category?.descripcion }}
+        </span>
+
+        <span class="badge" *ngIf="product.company?.nombre">
+          {{ product.company?.nombre }}
+        </span>
+
+        <span class="badge" [class.badge-ok]="product.stock > 0" [class.badge-bad]="product.stock <= 0">
+          Stock: {{ product.stock }}
+        </span>
+      </div>
+
+      <div class="price">
+        {{ product.price | currency:'CLP':'symbol':'1.0-0' }}
+      </div>
+
+      <div class="actions">
+        <button class="btn" (click)="openWebsite(product.website)" [disabled]="!product.website">
+          Ver sitio web
+        </button>
+
+        <button class="btn primary">
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -34,7 +34,6 @@ export interface Product {
   id_compania?: number;
 }
 
-
 export interface PaginatedResponse<T> {
   data: T[];
   current_page: number;
@@ -64,8 +63,15 @@ export class ProductService {
     return this.http.get<Product[]>(`${this.apiUrl}/products`);
   }
 
+  /** DETALLE */
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/products/${id}`);
+  }
+
   /** CATÁLOGO ADMIN: filtros y paginado **/
-  getProductsAdmin(filters: ProductsFilters = {}): Observable<PaginatedResponse<Product>> {
+  getProductsAdmin(
+    filters: ProductsFilters = {},
+  ): Observable<PaginatedResponse<Product>> {
     let params = new HttpParams();
 
     const page = filters.page ?? 1;
@@ -75,8 +81,10 @@ export class ProductService {
     params = params.set('limit', limit);
 
     if (filters.q?.trim()) params = params.set('q', filters.q.trim());
-    if (filters.category_id) params = params.set('category_id', filters.category_id);
-    if (filters.id_compania) params = params.set('id_compania', filters.id_compania);
+    if (filters.category_id)
+      params = params.set('category_id', filters.category_id);
+    if (filters.id_compania)
+      params = params.set('id_compania', filters.id_compania);
 
     if (filters.min_price !== null && filters.min_price !== undefined) {
       params = params.set('min_price', filters.min_price);
@@ -89,7 +97,10 @@ export class ProductService {
       params = params.set('in_stock', String(filters.in_stock)); // "true"/"false"
     }
 
-    return this.http.get<PaginatedResponse<Product>>(`${this.apiUrl}/products`, { params });
+    return this.http.get<PaginatedResponse<Product>>(
+      `${this.apiUrl}/products`,
+      { params },
+    );
   }
 
   /** ACCIONES CRUD **/
@@ -117,24 +128,32 @@ export class ProductService {
       stock: number;
       category_id: number;
       id_compania: number;
-    }>
+    }>,
   ): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/products/${id}`, payload);
   }
 
   deleteProduct(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/products/${id}`);
+    return this.http.delete<{ message: string }>(
+      `${this.apiUrl}/products/${id}`,
+    );
   }
 
   /** Combos categorias y compañias **/
-  getCategories(q?: string): Observable<CategoryMini[] | PaginatedResponse<CategoryMini>> {
+  getCategories(
+    q?: string,
+  ): Observable<CategoryMini[] | PaginatedResponse<CategoryMini>> {
     let params = new HttpParams();
     if (q?.trim()) params = params.set('q', q.trim());
     // Paginado o sin paginar
-    return this.http.get<CategoryMini[]>(`${this.apiUrl}/categories`, { params });
+    return this.http.get<CategoryMini[]>(`${this.apiUrl}/categories`, {
+      params,
+    });
   }
 
-  getCompanies(q?: string): Observable<CompanyMini[] | PaginatedResponse<CompanyMini>> {
+  getCompanies(
+    q?: string,
+  ): Observable<CompanyMini[] | PaginatedResponse<CompanyMini>> {
     let params = new HttpParams();
     if (q?.trim()) params = params.set('q', q.trim());
     return this.http.get<CompanyMini[]>(`${this.apiUrl}/companias`, { params });

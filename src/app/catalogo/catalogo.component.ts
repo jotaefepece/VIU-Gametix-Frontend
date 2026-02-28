@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService, Product } from '../services/producto.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { WishlistService } from '../services/wishlist.service';
 
 
@@ -9,7 +9,7 @@ import { WishlistService } from '../services/wishlist.service';
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './catalogo.component.html',
   styleUrls: ['./catalogo.component.css']
 })
@@ -45,6 +45,9 @@ export class CatalogoComponent implements OnInit {
     });
   }
 
+  irDetalle(id: number) {
+  this.router.navigate(['/producto', id]);
+  }
 
   estaLogueado(): boolean {
     return !!localStorage.getItem('token');
