@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import {
   ProductService,
@@ -17,7 +18,7 @@ import { WishlistService } from '../services/wishlist.service';
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatSnackBarModule],
   templateUrl: './catalogo.component.html',
   styleUrls: ['./catalogo.component.css'],
 })
@@ -55,11 +56,20 @@ export class CatalogoComponent implements OnInit {
     private productService: ProductService,
     private router: Router,
     private wishlistService: WishlistService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.loadCombos();
     this.fetch();
+  }
+
+  private toastOk(msg: string) {
+    this.snackBar.open(msg, 'Cerrar', { duration: 2500 });
+  }
+
+  private toastError(msg: string) {
+    this.snackBar.open(msg, 'Cerrar', { duration: 3500 });
   }
 
   private loadCombos() {
@@ -177,53 +187,55 @@ export class CatalogoComponent implements OnInit {
   }
 
   agregarALista(producto: Product) {
-    if (!this.estaLogueado()) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    const usuarioString = localStorage.getItem('user');
-    if (!usuarioString) return;
-
-    const usuario = JSON.parse(usuarioString);
-    const idUsuario = usuario.id;
-
-    const idListaStorage = localStorage.getItem('id_lista');
-    let idLista = idListaStorage ? parseInt(idListaStorage, 10) : null;
-
-    if (!idLista) {
-      const dataLista = {
-        id_usuario: idUsuario,
-        nombre: 'Deseos 2026',
-        descripcion: 'Jueguitos y accesorios que quiero comprar',
-      };
-
-      this.wishlistService.crearLista(dataLista).subscribe({
-        next: (lista) => {
-          localStorage.setItem('id_lista', lista.id_lista.toString());
-          idLista = lista.id_lista;
-
-          if (idLista !== null) {
-            this.agregarProductoALista(idLista, producto);
-          }
-        },
-        error: (err) => {
-          console.error('Error creando lista', err);
-        },
-      });
-    } else {
-      this.agregarProductoALista(idLista, producto);
-    }
+  if (!this.estaLogueado()) {
+    this.router.navigate(['/login']);
+    return;
   }
 
-  private agregarProductoALista(idLista: number, producto: Product) {
-    this.wishlistService.agregarProducto(idLista, producto.id).subscribe({
-      next: (response) => {
-        console.log('Producto agregado correctamente', response);
+  const idListaStorage = localStorage.getItem('id_lista');
+  const idLista = idListaStorage ? parseInt(idListaStorage, 10) : null;
+
+  if (!idLista) {
+    const dataLista = {
+      nombre: 'Deseos 2026',
+      descripcion: 'Jueguitos y accesorios que quiero comprar',
+    };
+
+    this.wishlistService.crearLista(dataLista).subscribe({
+      next: (lista) => {
+        localStorage.setItem('id_lista', String(lista.id_lista));
+        this.agregarProductoALista(lista.id_lista, producto);
       },
       error: (err) => {
-        console.error('Error agregando producto', err);
+        console.error('Error creando lista', err);
       },
     });
+
+    return;
   }
+
+  this.agregarProductoALista(idLista, producto);
+}
+
+private agregarProductoALista(idLista: number, producto: Product) {
+  this.wishlistService.agregarProducto(idLista, producto.id).subscribe({
+    next: (resp) => {
+      console.log('Producto agregado a deseos ✅', resp);
+      this.toastOk('Agregado a deseos 🤍');
+    },
+    error: (err) => {
+     if (err?.status === 409) {
+        this.toastOk('Ese producto ya está en tus deseos.');
+        return;
+      }
+      if (err?.status === 401) {
+        this.toastError('Debes iniciar sesión para agregar a deseos');
+        this.router.navigate(['/login']);
+        return;
+      }
+      this.toastError('No se pudo agregar. Por favor, intenta de nuevo.');
+      console.error('Error agregando producto', err);
+    },
+  });
+}
 }
