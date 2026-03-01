@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 
 import {
   ProductService,
@@ -18,7 +19,7 @@ import { WishlistService } from '../services/wishlist.service';
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, MatSnackBarModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatSnackBarModule, VideoPlayerComponent],
   templateUrl: './catalogo.component.html',
   styleUrls: ['./catalogo.component.css'],
 })

@@ -1,0 +1,34 @@
+.video-box{
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
+}
+
+.video-box h2{
+  margin: 0;
+}
+
+/* Contenedor que centra y limita ancho */
+.video-wrap{
+  width: 100%;
+  max-width: 720px;     
+  margin: 0 auto;       
+}
+
+/* Video responsive dentro del wrap */
+video{
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  background: #000;
+}
+
+.video-title{
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center; 
+}
