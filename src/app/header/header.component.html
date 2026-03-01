@@ -13,10 +13,9 @@
 
 
     @if (isLoggedIn()) {
-      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
     } @else {
-      <a routerLink="/login" routerLinkActive="active" class="btn-login">Iniciar sesión</a>
+    <a routerLink="/login" routerLinkActive="active" class="btn-login">Iniciar sesión</a>
     }
   </nav>
 </header>
-
