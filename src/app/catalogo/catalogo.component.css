@@ -115,3 +115,104 @@ h2 {
   color: inherit;
   display: block;
 }
+
+.filters {
+  background: #0d0d0d;
+  border: 1px solid rgba(157, 123, 255, 0.25);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1.5rem auto 2rem;
+}
+
+.filters .row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.filters input,
+.filters select {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #111;
+  color: #eee;
+  outline: none;
+}
+
+.filters input::placeholder {
+  color: #888;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(157, 123, 255, 0.5);
+  background: rgba(157, 123, 255, 0.15);
+  color: #eee;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: rgba(157, 123, 255, 0.25);
+}
+
+.btn.outline {
+  background: transparent;
+}
+
+.meta {
+  text-align: center;
+  color: #bbb;
+  margin: 0.5rem 0 1rem;
+}
+
+.error {
+  color: #ff6b6b;
+  text-align: center;
+}
+
+.no-stock {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 2rem 0 1rem;
+}
+
+.pg {
+  min-width: 42px;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(157, 123, 255, 0.35);
+  background: #111;
+  color: #eee;
+  cursor: pointer;
+}
+
+.pg:hover {
+  background: rgba(157, 123, 255, 0.15);
+}
+
+.pg.active {
+  background: rgba(157, 123, 255, 0.35);
+  border-color: rgba(157, 123, 255, 0.7);
+}
+
+.pg:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

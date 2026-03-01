@@ -1,24 +1,88 @@
 <div class="catalogo-container">
   <h1>Catálogo GAMETIX</h1>
 
+  <!-- FILTROS -->
+  <div class="filters">
+    <div class="row">
+      <input
+        type="text"
+        placeholder="Buscar (nombre/desc)..."
+        [(ngModel)]="q"
+        (keyup.enter)="applyFilters()"
+      />
+
+      <select [(ngModel)]="category_id" (change)="applyFilters()">
+        <option [ngValue]="null">Todas las categorías</option>
+        @for (c of categories; track c.id) {
+          <option [ngValue]="c.id">{{ c.descripcion }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="id_compania" (change)="applyFilters()">
+        <option [ngValue]="null">Todas las empresas</option>
+        @for (co of companies; track co.id_compania) {
+          <option [ngValue]="co.id_compania">{{ co.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="row">
+      <input
+        type="number"
+        placeholder="Min $"
+        [(ngModel)]="min_price"
+        (keyup.enter)="applyFilters()"
+      />
+
+      <input
+        type="number"
+        placeholder="Max $"
+        [(ngModel)]="max_price"
+        (keyup.enter)="applyFilters()"
+      />
+
+      <select [(ngModel)]="in_stock" (change)="applyFilters()">
+        <option [ngValue]="null">Stock: cualquiera</option>
+        <option [ngValue]="true">Solo con stock</option>
+        <option [ngValue]="false">Solo sin stock</option>
+      </select>
+
+      <select [(ngModel)]="limit" (change)="applyFilters()">
+        <option [ngValue]="8">8 por página</option>
+        <option [ngValue]="12">12 por página</option>
+        <option [ngValue]="16">16 por página</option>
+        <option [ngValue]="24">24 por página</option>
+      </select>
+
+      <div class="actions">
+        <button class="btn" (click)="applyFilters()">Aplicar</button>
+        <button class="btn outline" (click)="clearFilters()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
   @if (loading) {
     <p>Cargando productos desde el servidor...</p>
   } @else if (error) {
-    <p style="color: red;">{{ error }}</p>
+    <p class="error">{{ error }}</p>
   } @else {
+
+    <div class="meta">
+      <span>
+        Mostrando página {{ meta.current_page }} de {{ meta.last_page }}
+        ({{ meta.total }} productos)
+      </span>
+    </div>
 
     <h2>Productos disponibles</h2>
 
     <div class="grid">
-      @for (producto of productosDestacados; track producto.id) {
-
-        <a
-          class="card link-card"
-          [routerLink]="['/producto', producto.id]">
-
+      @for (producto of items; track producto.id) {
+        <a class="card link-card" [routerLink]="['/producto', producto.id]">
           <img
             [src]="producto?.imagen_url?.trim() ? producto.imagen_url : 'https://via.placeholder.com/300x300?text=Producto'"
-            [alt]="producto.name" />
+            [alt]="producto.name"
+          />
 
           <div class="info">
             <h3>{{ producto.name }}</h3>
@@ -31,24 +95,46 @@
             <p>Categoría: {{ producto.category?.descripcion }}</p>
             <p>Empresa: {{ producto.company?.nombre }}</p>
 
-            <p *ngIf="producto.stock === 0" style="color:red;">
+            <p *ngIf="producto.stock === 0" class="no-stock">
               Sin stock
             </p>
 
             <button
               type="button"
               class="btn-wishlist"
-              (click)="agregarALista(producto); $event.preventDefault(); $event.stopPropagation();">
+              (click)="agregarALista(producto); $event.preventDefault(); $event.stopPropagation();"
+            >
               Agregar a deseos 🤍
             </button>
           </div>
-
         </a>
-
       } @empty {
         <p>No hay productos disponibles.</p>
       }
     </div>
 
+    <!-- PAGINACIÓN -->
+    <div class="pagination" *ngIf="meta.last_page > 1">
+      <button class="pg" (click)="prev()" [disabled]="meta.current_page <= 1">
+        ←
+      </button>
+
+      <button
+        class="pg"
+        [class.active]="p === meta.current_page"
+        *ngFor="let p of pages"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+
+      <button
+        class="pg"
+        (click)="next()"
+        [disabled]="meta.current_page >= meta.last_page"
+      >
+        →
+      </button>
+    </div>
   }
 </div>
