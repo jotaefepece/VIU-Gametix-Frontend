@@ -1,41 +1,108 @@
+
+
+/* evita overflow horizontal global */
+html, body { max-width: 100%; overflow-x: hidden; }
+* { box-sizing: border-box; }
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+
   padding: 1rem 3rem;
   background: #111;
   border-bottom: 1px solid #333;
+
   position: sticky;
   top: 0;
   z-index: 1000;
+
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+
 }
 
+/* Logo */
 .logo {
   font-size: 2.2rem;
   font-weight: bold;
   color: #9d7bff;
   letter-spacing: 2px;
+  white-space: nowrap; /* logo no se parte */
 }
 
+/* Menú: scroll horizontal visible */
 .menu {
   display: flex;
   align-items: center;
   gap: 2.5rem;
+
+  /* clave para que el flex pueda encogerse sin romper el layout */
+  flex: 1;
+  min-width: 0;
+
+  /* Scroll horizontal */
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  justify-content: flex-end;
+  -webkit-overflow-scrolling: touch;
+
+
+  padding-bottom: 10px;
+
+  /* Si el browser lo soporta, reserva el espacio del scrollbar */
+  scrollbar-gutter: stable both-edges;
+
+  /*  “Fade” suave en los bordes para indicar que hay más contenido */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 18px,
+    black calc(100% - 18px),
+    transparent 100%
+  );
 }
 
+/* Scrollbar visible (Chrome/Edge) */
+.menu::-webkit-scrollbar {
+  height: 10px;
+}
+.menu::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 999px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background: rgba(157, 123, 255, 0.85); 
+  border-radius: 999px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 160, 255, 0.95); /* morado claro en hover */
+}
+
+/* Scrollbar visible (Firefox) */
+.menu {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(157, 123, 255, 0.85) #1a1a1a;
+}
+
+/* Links y botones  */
 .menu a,
 .menu button {
+  flex: 0 0 auto; /* evita que se aplasten */
+
   color: #eee;
   text-decoration: none;
   font-size: 1.1rem;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   transition: all 0.3s ease;
+
   background: transparent;
   border: none;
   cursor: pointer;
 }
+
 
 .menu a:hover,
 .menu button:hover {
@@ -43,12 +110,14 @@ header {
   color: #9d7bff;
 }
 
+
 .menu a.active {
   background: #9d7bff;
   color: black;
   font-weight: bold;
 }
 
+/* Botón login */
 .btn-login {
   background: #9d7bff !important;
   color: black !important;
@@ -59,6 +128,7 @@ header {
   background: #b8a0ff !important;
 }
 
+/* Botón logout  */
 .btn-logout {
   background: #ff4444 !important;
   color: white !important;
@@ -69,7 +139,7 @@ header {
   background: #ff6666 !important;
 }
 
-/* Responsive: menú más compacto en móviles */
+/* Responsive */
 @media (max-width: 768px) {
   header {
     flex-direction: column;
@@ -78,8 +148,27 @@ header {
   }
 
   .menu {
-    flex-wrap: wrap;
-    justify-content: center;
+    /* en móvil el scroll sigue funcionando */
+    justify-content: flex-start;
     gap: 1rem;
+    width: 100%;
   }
 }
+
+/* ========= OPCIONAL: hint visual “⇆” para indicar que se desliza ========= */
+/* Si quieres activarlo, descomenta esto. Deja el color morado y no estorba. */
+/*
+@media (max-width: 992px) {
+  header { position: sticky; }
+  header::after {
+    content: "⇆";
+    position: absolute;
+    right: 12px;
+    bottom: 6px;
+    font-size: 14px;
+    opacity: 0.65;
+    color: #9d7bff;
+    pointer-events: none;
+  }
+}
+*/
