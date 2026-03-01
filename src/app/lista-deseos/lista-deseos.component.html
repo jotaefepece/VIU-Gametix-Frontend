@@ -1,17 +1,59 @@
 <div class="wishlist-container">
+  <div class="header">
+    <h1>Mi Lista de Deseos ❤️</h1>
 
-  <h1>Mi Lista de Deseos ❤️</h1>
+    <div class="header-actions">
+      <button class="btn primary" (click)="guardar()" [disabled]="saving">
+        {{ idLista ? 'Guardar cambios' : 'Crear lista' }}
+      </button>
+
+      @if (idLista) {
+        <button class="btn danger" (click)="eliminarLista()" [disabled]="loading || saving">
+          Eliminar lista
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading) {
+    <p class="state">Cargando...</p>
+  }
+
+  @if (!loading && errorMsg) {
+    <p class="state error">{{ errorMsg }}</p>
+  }
+
+  @if (!loading && okMsg) {
+    <p class="state ok">{{ okMsg }}</p>
+  }
+
+  <!-- Form: nombre + descripción -->
+  <div class="form">
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="nombre" maxlength="150" placeholder="Ej: Favoritos" />
+    </div>
+
+    <div class="field">
+      <label>Descripción</label>
+      <textarea
+        [(ngModel)]="descripcion"
+        maxlength="2000"
+        rows="3"
+        placeholder="Opcional..."
+      ></textarea>
+    </div>
+  </div>
+
+  <!-- Productos -->
+  <h2 class="subtitle">Productos</h2>
 
   @if (productos.length === 0) {
-    <p class="empty">
-      Tu lista está vacía. Agrega productos desde el catálogo.
-    </p>
+    <p class="empty">Tu lista está vacía. Agrega productos desde el catálogo.</p>
   }
 
   @if (productos.length > 0) {
-
     <table class="wishlist-table">
-
       <thead>
         <tr>
           <th>Producto</th>
@@ -21,35 +63,22 @@
       </thead>
 
       <tbody>
-        @for (producto of productos; track producto.id) {
+        @for (producto of productos; track trackById) {
           <tr>
-            <td>
-              {{ producto.name }}
-            </td>
+            <td>{{ producto.name }}</td>
 
             <td>
-              ${{ producto.precio?.toLocaleString('es-CL') }}
+              {{ (producto.precio ?? 0) | currency:'CLP':'symbol':'1.0-0':'es-CL' }}
             </td>
 
             <td class="acciones">
-
-              <!--button class="btn-carrito"
-                      (click)="enviarProductoAlCarrito(producto)">
-                🛒
-              </button-->
-
-              <button class="btn-eliminar"
-                      (click)="eliminarProductoDeLista(producto)">
+              <button class="btn-eliminar" (click)="eliminarProductoDeLista(producto)">
                 🗑
               </button>
-
             </td>
           </tr>
         }
       </tbody>
-
     </table>
-
   }
-
 </div>

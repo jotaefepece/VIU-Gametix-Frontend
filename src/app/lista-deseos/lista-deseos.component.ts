@@ -1,90 +1,201 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-
-import { WishlistService } from '../services/wishlist.service';
-import { CarritoService } from '../services/carrito.service';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { WishlistService, ListaDeseo } from '../services/wishlist.service';
 
 @Component({
   selector: 'app-lista-deseos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './lista-deseos.component.html',
-  styleUrls: ['./lista-deseos.component.css']
+  styleUrls: ['./lista-deseos.component.css'],
 })
 export class ListaDeseosComponent implements OnInit {
-
   private wishlistService = inject(WishlistService);
-  private carritoService = inject(CarritoService);
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  loading = false;
+  saving = false;
+  errorMsg = '';
+  okMsg = '';
+
+  // lista
+  idLista: number | null = null;
+  lista: ListaDeseo | null = null;
+
+  // inputs (nombre/descripcion)
+  nombre = '';
+  descripcion: string | null = null;
+
+  // productos
   productos: any[] = [];
-  idLista!: number;
 
   ngOnInit(): void {
-    this.inicializarLista();
+    this.inicializar();
   }
 
-  /**
-   * Obtiene el id de la lista desde localStorage
-   * y carga los productos
-   */
-  private inicializarLista(): void {
+  private inicializar(): void {
+    // Ruta (para el futuro) /lista-deseos/123
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const idFromRoute = idParam ? Number(idParam) : null;
 
-    const idListaStorage = localStorage.getItem('id_lista');
+    // Por localStorage (actual)
+    const idFromStorage = localStorage.getItem('id_lista')
+      ? Number(localStorage.getItem('id_lista'))
+      : null;
 
-    if (!idListaStorage) {
-      console.warn('No existe lista de deseos');
+    const id = idFromRoute || idFromStorage;
+
+    if (!id || Number.isNaN(id)) {
+      // Modo "crear" sin id 
+      this.idLista = null;
+      this.lista = null;
+      this.nombre = '';
+      this.descripcion = null;
       this.productos = [];
       return;
     }
 
-    this.idLista = Number(idListaStorage);
-    this.cargarProductos();
+    this.idLista = id;
+
+    // carga data de la lista y productos
+    this.cargarListaYProductos();
   }
 
-  /**
-   * Consulta los productos de la lista al backend
-   */
-  cargarProductos(): void {
+  private cargarListaYProductos(): void {
+    if (!this.idLista) return;
 
-    this.wishlistService.obtenerProductos(this.idLista)
-      .subscribe({
-        next: (data) => {
-          this.productos = data;
+    this.loading = true;
+    this.errorMsg = '';
+    this.okMsg = '';
+
+    // Datos de la lista (nombre/descripcion)
+    this.wishlistService.obtenerLista(this.idLista).subscribe({
+      next: (lista) => {
+        this.lista = lista;
+        this.nombre = lista.nombre ?? '';
+        this.descripcion = lista.descripcion ?? null;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMsg = 'No se pudo cargar la lista.';
+        this.loading = false;
+      },
+    });
+
+    // Productos de la lista
+    this.wishlistService.obtenerProductos(this.idLista).subscribe({
+      next: (data) => (this.productos = data),
+      error: (err) => console.error('Error cargando productos:', err),
+    });
+  }
+
+  guardar(): void {
+    this.okMsg = '';
+    this.errorMsg = '';
+
+    const payload = {
+      nombre: this.nombre.trim(),
+      descripcion: this.descripcion?.trim() || null,
+    };
+
+    if (!payload.nombre) {
+      this.errorMsg = 'El nombre es obligatorio.';
+      return;
+    }
+
+    this.saving = true;
+
+    // Si existe id = PATCH / UPDATE
+    if (this.idLista) {
+      this.wishlistService.actualizarLista(this.idLista, payload).subscribe({
+        next: (updated) => {
+          this.lista = updated;
+          this.nombre = updated.nombre ?? this.nombre;
+          this.descripcion = updated.descripcion ?? this.descripcion;
+          this.okMsg = 'Lista guardada ✅';
+          this.saving = false;
         },
-        error: (error) => {
-          console.error('Error cargando productos:', error);
-        }
+        error: (err) => {
+          console.error(err);
+          this.errorMsg = 'No se pudo guardar la lista.';
+          this.saving = false;
+        },
       });
+      return;
+    }
+
+    // Si no hay id  CREATE y guarda id en localStorage para que ya quede “activa”
+    this.wishlistService.crearLista(payload).subscribe({
+      next: (created) => {
+        this.lista = created;
+        this.idLista = created.id_lista;
+
+        localStorage.setItem('id_lista', String(created.id_lista));
+
+        this.okMsg = 'Lista creada ✅';
+        this.saving = false;
+
+        // Puede ser para futuro (actual no) /lista-deseos/:id
+        // this.router.navigate(['/lista-deseos', created.id_lista]);
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMsg = 'No se pudo crear la lista.';
+        this.saving = false;
+      },
+    });
   }
 
-  /**
-   * Elimina un producto de la lista de deseos
-   */
   eliminarProductoDeLista(producto: any): void {
+    if (!this.idLista) return;
 
-    
+    const ok = confirm(`¿Quitar "${producto.name}" de la lista?`);
+    if (!ok) return;
+
     this.wishlistService.eliminarProducto(this.idLista, producto.id).subscribe({
-        next: () => {
-          this.cargarProductos(); // refresca tabla
-        },
-        error: (error) => {
-          console.error('Error eliminando producto:', error);
-        }
-      });
+      next: () => this.cargarProductos(),
+      error: (err) => console.error('Error eliminando producto:', err),
+    });
   }
 
-  /**
-   * Envía el producto al carrito
-   */
- /* enviarProductoAlCarrito(producto: any): void {
+  private cargarProductos(): void {
+    if (!this.idLista) return;
 
-    this.carritoService.agregarProducto(producto);
+    this.wishlistService.obtenerProductos(this.idLista).subscribe({
+      next: (data) => (this.productos = data),
+      error: (err) => console.error('Error cargando productos:', err),
+    });
+  }
 
-    console.log('Producto enviado al carrito:', producto);
+  eliminarLista(): void {
+    if (!this.idLista) return;
 
-    // Luego podemos eliminarlo automáticamente de la lista si quieres
-  }*/
+    const ok = confirm('¿Eliminar esta lista completa?');
+    if (!ok) return;
 
+    this.loading = true;
+    this.wishlistService.eliminarLista(this.idLista).subscribe({
+      next: () => {
+        this.loading = false;
+        localStorage.removeItem('id_lista');
+        this.idLista = null;
+        this.lista = null;
+        this.nombre = '';
+        this.descripcion = null;
+        this.productos = [];
+        this.okMsg = 'Lista eliminada ✅';
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMsg = 'No se pudo eliminar la lista.';
+        this.loading = false;
+      },
+    });
+  }
+
+  trackById = (_: number, item: any) => item?.id;
 }
