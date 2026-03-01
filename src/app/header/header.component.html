@@ -11,11 +11,6 @@
     <a routerLink="/admin-productos" routerLinkActive="active">Administrar productos</a>
     <a routerLink="/admin-categorias" routerLinkActive="active">Administrar categorías</a>
 
- <!-- Mostrar Login si NO está logueado -->
-  <a *ngIf="!isLoggedIn()" routerLink="/login">Login</a>
-
-  <!-- Mostrar Logout si está logueado -->
-  <button *ngIf="isLoggedIn()" (click)="logout()">Cerrar sesión</button>
 
     @if (isLoggedIn()) {
       <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
