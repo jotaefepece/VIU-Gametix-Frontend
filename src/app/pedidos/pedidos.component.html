@@ -1,0 +1,96 @@
+<div class="page">
+    <h1 class="title">Pedidos</h1>
+
+    <!-- Filtros -->
+    <div class="filters">
+        <input class="input" placeholder="Buscar (id/monto)..." [(ngModel)]="q" (keyup.enter)="buscar(true)" />
+
+        <input class="input small" placeholder="Id estado" type="number" [(ngModel)]="id_estado"
+            (keyup.enter)="buscar(true)" />
+
+        <input class="input small" type="date" [(ngModel)]="desde" />
+        <input class="input small" type="date" [(ngModel)]="hasta" />
+
+        <input class="input small" placeholder="Min $" type="number" [(ngModel)]="min" (keyup.enter)="buscar(true)" />
+
+        <input class="input small" placeholder="Max $" type="number" [(ngModel)]="max" (keyup.enter)="buscar(true)" />
+
+        <button class="btn" (click)="buscar(true)">Buscar</button>
+        <button class="btn ghost" (click)="limpiar()">Limpiar</button>
+
+        <div class="spacer"></div>
+
+        <!-- Limit (sin ngValue) -->
+        <select class="select small" (change)="limit = +$any($event.target).value; buscar(true)">
+            <option [selected]="limit === 10" value="10">10</option>
+            <option [selected]="limit === 20" value="20">20</option>
+            <option [selected]="limit === 50" value="50">50</option>
+        </select>
+    </div>
+
+    @if (loading) {
+    <p class="info">Cargando pedidos...</p>
+    }
+
+    @if (!loading && errorMsg) {
+    <p class="info error">{{ errorMsg }}</p>
+    }
+
+    @if (!loading && !errorMsg && items.length === 0) {
+    <p class="info">No hay pedidos para los filtros actuales.</p>
+    }
+
+    @if (!loading && items.length > 0) {
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estado</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th style="width: 140px;">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for (p of items; track p.id_pedido) {
+                <tr>
+                    <td>#{{ p.id_pedido }}</td>
+
+                    <td>
+                        <span class="badge">
+                            {{ p.estado?.descripcion ?? ('#' + p.id_estado) }}
+                        </span>
+                    </td>
+
+                    <td>{{ moneyCLP(p.monto_total) }}</td>
+                    <td>{{ formatDateTime(p.fecha) }}</td>
+
+                    <td>
+                        <button class="btn ghost" (click)="eliminarPedido(p)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación (usa irPagina) -->
+    <div class="pager" *ngIf="limit !== null && lastPage > 1">
+        <button class="btn ghost" (click)="irPagina(page - 1)" [disabled]="page <= 1">
+            ← Anterior
+        </button>
+
+        <div class="pager-info">
+            Página <b>{{ page }}</b> de <b>{{ lastPage }}</b> · Total: <b>{{ total }}</b>
+        </div>
+
+        <button class="btn ghost" (click)="irPagina(page + 1)" [disabled]="page >= lastPage">
+            Siguiente →
+        </button>
+    </div>
+    }
+</div>

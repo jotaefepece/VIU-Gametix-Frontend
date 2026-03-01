@@ -13,6 +13,7 @@ import { AdminProductosComponent } from './admin-productos/admin-productos.compo
 import { AdminCategoriasComponent } from './admin-categorias/admin-categorias.component';
 import { PagosComponent } from './pagos/pagos.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { PedidosComponent } from './pedidos/pedidos.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/catalogo', pathMatch: 'full' },  // fuerza ir a catálogo
@@ -26,6 +27,7 @@ export const routes: Routes = [
   { path: 'admin-productos', component: AdminProductosComponent, canActivate: [authGuard] },
   { path: 'admin-categorias', component: AdminCategoriasComponent, canActivate: [authGuard] },
   { path: 'pagos', component: PagosComponent, canActivate: [authGuard] },
+  { path: 'pedidos', component: PedidosComponent, canActivate: [authGuard] },
 
  // { path: 'categorias', component: CategoriasComponent },
   { path: '**', redirectTo: '/catalogo' }
