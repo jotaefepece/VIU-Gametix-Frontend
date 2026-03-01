@@ -56,7 +56,7 @@ export class CatalogoComponent implements OnInit {
     private productService: ProductService,
     private router: Router,
     private wishlistService: WishlistService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -65,11 +65,21 @@ export class CatalogoComponent implements OnInit {
   }
 
   private toastOk(msg: string) {
-    this.snackBar.open(msg, 'Cerrar', { duration: 2500 });
+    this.snackBar.open(msg, 'Cerrar', {
+      duration: 2500,
+      panelClass: ['snack-ok'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 
   private toastError(msg: string) {
-    this.snackBar.open(msg, 'Cerrar', { duration: 3500 });
+    this.snackBar.open(msg, 'Cerrar', {
+      duration: 3500,
+      panelClass: ['snack-error'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 
   private loadCombos() {
@@ -165,10 +175,10 @@ export class CatalogoComponent implements OnInit {
   }
 
   get pages(): number[] {
-    // paginación 
+    // paginación
     const last = this.meta.last_page || 1;
     const cur = this.meta.current_page || 1;
-    const windowSize = 2; 
+    const windowSize = 2;
 
     const start = Math.max(1, cur - windowSize);
     const end = Math.min(last, cur + windowSize);
@@ -187,55 +197,55 @@ export class CatalogoComponent implements OnInit {
   }
 
   agregarALista(producto: Product) {
-  if (!this.estaLogueado()) {
-    this.router.navigate(['/login']);
-    return;
+    if (!this.estaLogueado()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const idListaStorage = localStorage.getItem('id_lista');
+    const idLista = idListaStorage ? parseInt(idListaStorage, 10) : null;
+
+    if (!idLista) {
+      const dataLista = {
+        nombre: 'Deseos 2026',
+        descripcion: 'Jueguitos y accesorios que quiero comprar',
+      };
+
+      this.wishlistService.crearLista(dataLista).subscribe({
+        next: (lista) => {
+          localStorage.setItem('id_lista', String(lista.id_lista));
+          this.agregarProductoALista(lista.id_lista, producto);
+        },
+        error: (err) => {
+          console.error('Error creando lista', err);
+        },
+      });
+
+      return;
+    }
+
+    this.agregarProductoALista(idLista, producto);
   }
 
-  const idListaStorage = localStorage.getItem('id_lista');
-  const idLista = idListaStorage ? parseInt(idListaStorage, 10) : null;
-
-  if (!idLista) {
-    const dataLista = {
-      nombre: 'Deseos 2026',
-      descripcion: 'Jueguitos y accesorios que quiero comprar',
-    };
-
-    this.wishlistService.crearLista(dataLista).subscribe({
-      next: (lista) => {
-        localStorage.setItem('id_lista', String(lista.id_lista));
-        this.agregarProductoALista(lista.id_lista, producto);
+  private agregarProductoALista(idLista: number, producto: Product) {
+    this.wishlistService.agregarProducto(idLista, producto.id).subscribe({
+      next: (resp) => {
+        console.log('Producto agregado a deseos ✅', resp);
+        this.toastOk('Agregado a deseos 🤍');
       },
       error: (err) => {
-        console.error('Error creando lista', err);
+        if (err?.status === 409) {
+          this.toastOk('Ese producto ya está en tus deseos.');
+          return;
+        }
+        if (err?.status === 401) {
+          this.toastError('Debes iniciar sesión para agregar a deseos');
+          this.router.navigate(['/login']);
+          return;
+        }
+        this.toastError('No se pudo agregar. Por favor, intenta de nuevo.');
+        console.error('Error agregando producto', err);
       },
     });
-
-    return;
   }
-
-  this.agregarProductoALista(idLista, producto);
-}
-
-private agregarProductoALista(idLista: number, producto: Product) {
-  this.wishlistService.agregarProducto(idLista, producto.id).subscribe({
-    next: (resp) => {
-      console.log('Producto agregado a deseos ✅', resp);
-      this.toastOk('Agregado a deseos 🤍');
-    },
-    error: (err) => {
-     if (err?.status === 409) {
-        this.toastOk('Ese producto ya está en tus deseos.');
-        return;
-      }
-      if (err?.status === 401) {
-        this.toastError('Debes iniciar sesión para agregar a deseos');
-        this.router.navigate(['/login']);
-        return;
-      }
-      this.toastError('No se pudo agregar. Por favor, intenta de nuevo.');
-      console.error('Error agregando producto', err);
-    },
-  });
-}
 }

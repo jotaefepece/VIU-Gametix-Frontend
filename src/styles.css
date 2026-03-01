@@ -91,3 +91,35 @@ nav a:hover {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* SnackBar (Angular Material) - que se vea sólido en fondo oscuro */
+.snack-ok .mdc-snackbar__surface,
+.snack-error .mdc-snackbar__surface {
+  opacity: 1 !important;
+  background: #1f2937 !important; /* gris oscuro sólido */
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* Detalle por tipo */
+.snack-ok .mdc-snackbar__surface {
+  border-left: 6px solid #22c55e; /* verde */
+}
+
+.snack-error .mdc-snackbar__surface {
+  border-left: 6px solid #ef4444; /* rojo */
+}
+
+/* Botón "Cerrar" */
+.snack-ok .mdc-button__label,
+.snack-error .mdc-button__label {
+  color: #a78bfa !important; /* moradito GAMETIX */
+  font-weight: 600;
+}
+
+/* Texto del toast */
+.snack-ok .mdc-snackbar__label,
+.snack-error .mdc-snackbar__label {
+  color: #fff !important;
+}
