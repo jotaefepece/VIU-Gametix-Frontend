@@ -14,6 +14,7 @@ import { AdminCategoriasComponent } from './admin-categorias/admin-categorias.co
 import { PagosComponent } from './pagos/pagos.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { PedidosComponent } from './pedidos/pedidos.component';
+import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/catalogo', pathMatch: 'full' },  // fuerza ir a catálogo
@@ -24,8 +25,8 @@ export const routes: Routes = [
   { path: 'lista-deseos', component: ListaDeseosComponent, canActivate: [authGuard] },
   { path: 'carrito', component: CarritoComponent, canActivate: [authGuard] },
   { path: 'prueba', component: PruebaComponent },
-  { path: 'admin-productos', component: AdminProductosComponent, canActivate: [authGuard] },
-  { path: 'admin-categorias', component: AdminCategoriasComponent, canActivate: [authGuard] },
+  { path: 'admin-productos', component: AdminProductosComponent, canActivate: [authGuard], canMatch: [roleGuard(['admin'])] },
+  { path: 'admin-categorias', component: AdminCategoriasComponent, canActivate: [authGuard], canMatch: [roleGuard(['admin'])], },
   { path: 'pagos', component: PagosComponent, canActivate: [authGuard] },
   { path: 'pedidos', component: PedidosComponent, canActivate: [authGuard] },
 

@@ -8,8 +8,10 @@
     <a routerLink="/carrito" routerLinkActive="active">Carrito</a>
     <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
     <a routerLink="/pagos" routerLinkActive="active">Pagos</a>
+    @if (isAdmin()) {
     <a routerLink="/admin-productos" routerLinkActive="active">Administrar productos</a>
     <a routerLink="/admin-categorias" routerLinkActive="active">Administrar categorías</a>
+    }
 
 
     @if (isLoggedIn()) {

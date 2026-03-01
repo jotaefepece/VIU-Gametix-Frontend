@@ -17,6 +17,8 @@ export class HeaderComponent {
 
    isLoggedIn = this.authService.isAuthenticated;
 
+   isAdmin = () => this.authService.hasRole('admin');
+
   logout() {
     this.authService.logout();
   }
