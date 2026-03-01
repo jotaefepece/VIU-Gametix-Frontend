@@ -228,6 +228,8 @@ export class CarritoComponent implements OnInit {
                 estado_pago: 'pagado',
               }),
             ),
+            // 3.1) Cambio estado a pagado
+            switchMap(() => this.pedidoService.actualizarEstadoPedido(idPedido, 2)),
             switchMap(() => {
               // 4) vaciar carrito en backend (DELETE por item)
               if (!this.idCarrito) return of(true);
@@ -266,7 +268,7 @@ export class CarritoComponent implements OnInit {
         this.checkoutLoading = false;
 
         // Navegar a pedidos:
-        // if (res?.ok) this.router.navigate(['/pedidos']);
+        if (res?.ok) this.router.navigate(['/pedidos']);
       });
   }
 }

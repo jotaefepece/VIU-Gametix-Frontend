@@ -42,4 +42,9 @@ export class PedidoService {
   eliminar(id_pedido: number): Observable<any> {
     return this.http.delete(`${this.endpoint}/${id_pedido}`);
   }
+
+  //Actualizar estado pedido
+   actualizarEstadoPedido(id_pedido: number, id_estado: number) {
+  return this.http.patch(`${this.endpoint}/${id_pedido}`, { id_estado });
+}
 }
