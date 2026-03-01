@@ -1,0 +1,136 @@
+.page {
+  padding: 24px;
+  color: #e5e7eb;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #a78bfa;
+  margin: 8px 0 18px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.input,
+.select {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  color: #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: rgba(229, 231, 235, 0.55);
+}
+
+.input.small,
+.select.small {
+  width: 120px;
+}
+
+.btn {
+  background: rgba(167, 139, 250, 0.9);
+  border: none;
+  color: #0b0b0f;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  color: #e5e7eb;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.info {
+  margin: 14px 0;
+  opacity: 0.9;
+}
+
+.info.error {
+  color: #fb7185;
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: 800;
+  padding: 14px 14px;
+  background: rgba(31, 41, 55, 0.55);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+.table tbody td {
+  padding: 14px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+.badge.ok {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.badge.warn {
+  border-color: rgba(234, 179, 8, 0.35);
+}
+
+.badge.bad {
+  border-color: rgba(244, 63, 94, 0.35);
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pager-info {
+  opacity: 0.9;
+}

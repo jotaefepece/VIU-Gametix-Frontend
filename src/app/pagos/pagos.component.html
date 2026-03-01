@@ -1,1 +1,129 @@
-<p>pagos works!</p>
+<div class="page">
+  <h1 class="title">Pagos</h1>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <input
+      class="input"
+      placeholder="Buscar (método/estado/id pedido/monto)..."
+      [formControl]="form.controls.q"
+      (keyup.enter)="buscar(true)"
+    />
+
+    <input
+      class="input small"
+      placeholder="Id pedido"
+      type="number"
+      [formControl]="form.controls.id_pedido"
+      (keyup.enter)="buscar(true)"
+    />
+
+    <select class="select" [formControl]="form.controls.estado">
+      <option value="">Estado: todos</option>
+      <option value="pendiente">pendiente</option>
+      <option value="pagado">pagado</option>
+      <option value="rechazado">rechazado</option>
+      <option value="reembolsado">reembolsado</option>
+    </select>
+
+    <input
+      class="input"
+      placeholder="Método (tarjeta, transferencia...)"
+      [formControl]="form.controls.metodo"
+      (keyup.enter)="buscar(true)"
+    />
+
+    <input class="input small" type="date" [formControl]="form.controls.desde" />
+    <input class="input small" type="date" [formControl]="form.controls.hasta" />
+
+    <input
+      class="input small"
+      placeholder="Min $"
+      type="number"
+      [formControl]="form.controls.min"
+      (keyup.enter)="buscar(true)"
+    />
+
+    <input
+      class="input small"
+      placeholder="Max $"
+      type="number"
+      [formControl]="form.controls.max"
+      (keyup.enter)="buscar(true)"
+    />
+
+    <button class="btn" (click)="buscar(true)">Buscar</button>
+    <button class="btn ghost" (click)="limpiar()">Limpiar</button>
+
+    <div class="spacer"></div>
+
+    <select class="select small" (change)="setLimit($any($event.target).value)">
+      <option [selected]="limit === 10" value="10">10</option>
+      <option [selected]="limit === 20" value="20">20</option>
+      <option [selected]="limit === 50" value="50">50</option>
+    </select>
+  </div>
+
+  @if (loading) {
+    <p class="info">Cargando pagos...</p>
+  }
+
+  @if (!loading && errorMsg) {
+    <p class="info error">{{ errorMsg }}</p>
+  }
+
+  @if (!loading && !errorMsg && items.length === 0) {
+    <p class="info">No hay pagos para los filtros actuales.</p>
+  }
+
+  @if (!loading && items.length > 0) {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pedido</th>
+            <th>Método</th>
+            <th>Estado</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (p of items; track p.id_pago) {
+            <tr>
+              <td>#{{ p.id_pago }}</td>
+              <td>#{{ p.id_pedido }}</td>
+              <td>{{ p.metodo_pago }}</td>
+              <td>
+                <span class="badge" [class.ok]="p.estado_pago === 'pagado'"
+                      [class.warn]="p.estado_pago === 'pendiente'"
+                      [class.bad]="p.estado_pago === 'rechazado'">
+                  {{ p.estado_pago }}
+                </span>
+              </td>
+              <td>{{ money(p.monto) }}</td>
+              <td>{{ formatDate(p.fecha_pago) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pager">
+      <button class="btn ghost" (click)="prevPage()" [disabled]="page <= 1">
+        ← Anterior
+      </button>
+
+      <div class="pager-info">
+        Página <b>{{ page }}</b> de <b>{{ lastPage }}</b> · Total: <b>{{ total }}</b>
+      </div>
+
+      <button class="btn ghost" (click)="nextPage()" [disabled]="page >= lastPage">
+        Siguiente →
+      </button>
+    </div>
+  }
+</div>
